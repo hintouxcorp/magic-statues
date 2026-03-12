@@ -79,8 +79,8 @@ class MainWindow(QWidget):
         super().__init__()
 
         self.save_name = save_name
-        self.setWindowTitle("Mapas")
-        self.setFixedSize(520, 500)
+        self.setWindowTitle("Magic Statues")
+        self.setFixedSize(600, 500)
 
         self.items = []
 
@@ -122,13 +122,44 @@ class MainWindow(QWidget):
         scroll_layout = QVBoxLayout()
 
         mapas = [
-            ("Mapa Goblin", 1, "1-20"),
-            ("Floresta Sombria", 1, "21-40"),
-            ("Castelo Antigo", 2, "41-60"),
-            ("Caverna de Gelo", 3, "61-80"),
-            ("Ruínas Perdidas", 4, "81-100"),
-            ("Templo Sagrado", 5, "101-120"),
-            ("Inferno Final", 7, "121-160")
+            # Mundo 1
+            ("Pantanal das Nuvens", 1, "22-42"),
+            ("Subúrbio Leste", 1, "25-45"),
+            ("Espaço Zen", 1, "28-48"),
+            ("Oásis do Céu", 1, "30-50"),
+            ("Lago do Sol Norte", 1, "30-50"),
+            ("Ilha do Sol", 1, "30-50"),
+            ("Duo-la Neve", 1, "30-50"),
+            ("Planalto do Sol Nascente", 1, "30-50"),
+
+            # Mundo 2
+            ("Pantanal Proibido", 2, "40-60"),
+            ("Sakura Dançante", 2, "40-60"),
+            ("Floresta Adormecida", 2, "50-70"),
+            ("Pradaria Ta-ke", 2, "50-70"),
+            ("Vila do Sol", 2, "50-70"),
+            ("Areia do Mar Vago", 2, "50-70"),
+
+            # Mundo 3
+            ("Lago do Sol Sul", 3, "60-80"),
+            ("Caminho dos raivosos", 3, "70-90"),
+            ("Campo da Rocha Gelada", 3, "80-100"),
+            ("Floresta Yu-feng", 3, "85-105"),
+            ("Montanhas Yun-lu", 3, "90-110"),
+            ("Caminho do Bambu", 3, "95-115"),
+            ("Meilin Nevada", 3, "95-115"),
+            ("Terra das Rochas Mágicas", 3, "100-120"),
+
+            # Mundo 4
+            ("Abismo da Calmaria", 4, "106-126"),
+            ("Bacia do Vale Linglan", 4, "106-126"),
+            ("Vale do Demônio", 4, "110-130"),
+            ("Terra da Luz Perdida", 4, "115-135"),
+            ("Terra das Ilusões", 4, "115-135"),
+            ("Terra das Promossas", 4, "125-145"),
+
+            # Mundo 5
+            ("Abismo Polar", 5, "130-150")
         ]
 
         for nome, mundo, level in mapas:
