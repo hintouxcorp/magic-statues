@@ -16,13 +16,11 @@ class MapItem(QWidget):
 
         layout = QHBoxLayout()
 
-        # labels
         self.nome_label = QLabel(nome)
         self.mundo_label = QLabel(f"Mundo {mundo}")
         self.level_label = QLabel(f"Lv {level}")
 
-        # botão
-        self.button = QPushButton("Habilitado")
+        self.button = QPushButton()
         self.button.clicked.connect(self.toggle_status)
 
         self.update_button()
@@ -52,7 +50,6 @@ class MapItem(QWidget):
 
         self.update_button()
 
-        # reaplicar filtro quando mudar status
         if self.parent_window:
             self.parent_window.apply_filter()
 
@@ -79,7 +76,7 @@ class MainWindow(QWidget):
         super().__init__()
 
         self.setWindowTitle("Mapas")
-        self.setFixedSize(500, 500)
+        self.setFixedSize(520, 500)
 
         self.items = []
 
@@ -90,24 +87,27 @@ class MainWindow(QWidget):
 
         main_layout = QVBoxLayout()
 
-        # filtros
         filter_layout = QHBoxLayout()
 
         self.status_filter = QComboBox()
-        self.status_filter.addItems(["Derrotado", "Habilitado"])
+        self.status_filter.addItems(["Nenhum", "Habilitado", "Derrotado"])
 
         self.level_spin = QSpinBox()
         self.level_spin.setRange(1, 160)
 
+        self.reset_maps_btn = QPushButton("Resetar Mapas")
+
         self.status_filter.currentTextChanged.connect(self.apply_filter)
         self.level_spin.valueChanged.connect(self.apply_filter)
+
+        self.reset_maps_btn.clicked.connect(self.reset_maps)
 
         filter_layout.addWidget(QLabel("Filtro"))
         filter_layout.addWidget(self.status_filter)
         filter_layout.addWidget(QLabel("Lv"))
         filter_layout.addWidget(self.level_spin)
+        filter_layout.addWidget(self.reset_maps_btn)
 
-        # scroll
         scroll = QScrollArea()
         scroll.setWidgetResizable(True)
 
@@ -146,12 +146,25 @@ class MainWindow(QWidget):
 
         for item in self.items:
 
-            status_match = (item.status == status)
+            # se nenhum filtro
+            if status == "Nenhum":
+                item.setVisible(True)
+                continue
 
             min_lv, max_lv = map(int, item.level_range.split("-"))
             level_match = (min_lv <= level <= max_lv)
 
+            status_match = (item.status == status)
+
             item.setVisible(status_match and level_match)
+
+    def reset_maps(self):
+
+        for item in self.items:
+            item.status = "Habilitado"
+            item.update_button()
+
+        self.apply_filter()
 
     def center(self):
 
