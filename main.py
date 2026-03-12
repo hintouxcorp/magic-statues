@@ -93,7 +93,8 @@ class MainWindow(QWidget):
         self.status_filter.addItems(["Nenhum", "Habilitado", "Derrotado"])
 
         self.level_spin = QSpinBox()
-        self.level_spin.setRange(1, 160)
+        self.level_spin.setRange(0, 160)
+        self.level_spin.setPrefix("Lv ")
 
         self.reset_maps_btn = QPushButton("Resetar Mapas")
 
@@ -104,7 +105,6 @@ class MainWindow(QWidget):
 
         filter_layout.addWidget(QLabel("Filtro"))
         filter_layout.addWidget(self.status_filter)
-        filter_layout.addWidget(QLabel("Lv"))
         filter_layout.addWidget(self.level_spin)
         filter_layout.addWidget(self.reset_maps_btn)
 
@@ -146,17 +146,28 @@ class MainWindow(QWidget):
 
         for item in self.items:
 
-            # se nenhum filtro
-            if status == "Nenhum":
+            # nenhum filtro ativo
+            if status == "Nenhum" and level == 0:
                 item.setVisible(True)
+                continue
+
+            # filtro apenas por status
+            if level == 0:
+                if status == "Nenhum":
+                    item.setVisible(True)
+                else:
+                    item.setVisible(item.status == status)
                 continue
 
             min_lv, max_lv = map(int, item.level_range.split("-"))
             level_match = (min_lv <= level <= max_lv)
 
-            status_match = (item.status == status)
-
-            item.setVisible(status_match and level_match)
+            # filtro apenas por level
+            if status == "Nenhum":
+                item.setVisible(level_match)
+            else:
+                status_match = (item.status == status)
+                item.setVisible(status_match and level_match)
 
     def reset_maps(self):
 
