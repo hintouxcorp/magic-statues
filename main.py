@@ -155,7 +155,7 @@ class MainWindow(QWidget):
             ("Bacia do Vale Linglan", 4, "106-126"),
             ("Vale do Demônio", 4, "110-130"),
             ("Terra da Luz Perdida", 4, "115-135"),
-            ("Terra das Ilusões", 4, "115-135"),
+            ("Terra das Ilusões", 4, "120-140"),
             ("Terra das Promossas", 4, "125-145"),
 
             # Mundo 5
