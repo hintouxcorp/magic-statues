@@ -3,15 +3,16 @@ from PyQt5.QtWidgets import (
     QVBoxLayout, QHBoxLayout, QComboBox,
     QSpinBox, QScrollArea
 )
-from PyQt5.QtCore import Qt
 import sys
 
 
 class MapItem(QWidget):
-    def __init__(self, nome, mundo, level):
+    def __init__(self, nome, mundo, level, parent_window=None):
         super().__init__()
 
         self.status = "Habilitado"
+        self.parent_window = parent_window
+        self.level_range = level
 
         layout = QHBoxLayout()
 
@@ -34,7 +35,6 @@ class MapItem(QWidget):
 
         self.setLayout(layout)
 
-        # estilo do container
         self.setStyleSheet("""
             QWidget {
                 border: 1px solid #444;
@@ -51,6 +51,10 @@ class MapItem(QWidget):
             self.status = "Habilitado"
 
         self.update_button()
+
+        # reaplicar filtro quando mudar status
+        if self.parent_window:
+            self.parent_window.apply_filter()
 
     def update_button(self):
 
@@ -77,6 +81,8 @@ class MainWindow(QWidget):
         self.setWindowTitle("Mapas")
         self.setFixedSize(500, 500)
 
+        self.items = []
+
         self.init_ui()
         self.center()
 
@@ -93,19 +99,21 @@ class MainWindow(QWidget):
         self.level_spin = QSpinBox()
         self.level_spin.setRange(1, 160)
 
+        self.status_filter.currentTextChanged.connect(self.apply_filter)
+        self.level_spin.valueChanged.connect(self.apply_filter)
+
         filter_layout.addWidget(QLabel("Filtro"))
         filter_layout.addWidget(self.status_filter)
         filter_layout.addWidget(QLabel("Lv"))
         filter_layout.addWidget(self.level_spin)
 
-        # scroll area
+        # scroll
         scroll = QScrollArea()
         scroll.setWidgetResizable(True)
 
         scroll_content = QWidget()
         scroll_layout = QVBoxLayout()
 
-        # exemplos de mapas
         mapas = [
             ("Mapa Goblin", 1, "1-20"),
             ("Floresta Sombria", 1, "21-40"),
@@ -117,7 +125,8 @@ class MainWindow(QWidget):
         ]
 
         for nome, mundo, level in mapas:
-            item = MapItem(nome, mundo, level)
+            item = MapItem(nome, mundo, level, self)
+            self.items.append(item)
             scroll_layout.addWidget(item)
 
         scroll_layout.addStretch()
@@ -129,6 +138,20 @@ class MainWindow(QWidget):
         main_layout.addWidget(scroll)
 
         self.setLayout(main_layout)
+
+    def apply_filter(self):
+
+        status = self.status_filter.currentText()
+        level = self.level_spin.value()
+
+        for item in self.items:
+
+            status_match = (item.status == status)
+
+            min_lv, max_lv = map(int, item.level_range.split("-"))
+            level_match = (min_lv <= level <= max_lv)
+
+            item.setVisible(status_match and level_match)
 
     def center(self):
 
