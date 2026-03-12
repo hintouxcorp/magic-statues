@@ -5,6 +5,7 @@ from PyQt5.QtWidgets import (
 )
 import sys
 import json
+import os
 
 
 class MapItem(QWidget):
@@ -74,9 +75,10 @@ class MapItem(QWidget):
 
 
 class MainWindow(QWidget):
-    def __init__(self):
+    def __init__(self, save_name):
         super().__init__()
 
+        self.save_name = save_name
         self.setWindowTitle("Mapas")
         self.setFixedSize(520, 500)
 
@@ -144,6 +146,9 @@ class MainWindow(QWidget):
 
         self.setLayout(main_layout)
 
+        # carregar estados salvos automaticamente
+        self.load_states()
+
     def apply_filter(self):
 
         status = self.status_filter.currentText()
@@ -186,10 +191,23 @@ class MainWindow(QWidget):
         for item in self.items:
             data[item.nome] = item.status
 
-        with open("map_states.json", "w", encoding="utf-8") as f:
+        with open(f"{self.save_name}.json", "w", encoding="utf-8") as f:
             json.dump(data, f, indent=4)
 
-        print("Estados salvos em map_states.json")
+        print(f"Estados salvos em {self.save_name}.json")
+
+    def load_states(self):
+
+        if not os.path.exists(f"{self.save_name}.json"):
+            return
+
+        with open(f"{self.save_name}.json", "r", encoding="utf-8") as f:
+            data = json.load(f)
+
+        for item in self.items:
+            if item.nome in data:
+                item.status = data[item.nome]
+                item.update_button()
 
     def center(self):
 
@@ -206,7 +224,7 @@ if __name__ == "__main__":
 
     app = QApplication(sys.argv)
 
-    window = MainWindow()
+    window = MainWindow('status_statues')
     window.show()
 
     sys.exit(app.exec())
